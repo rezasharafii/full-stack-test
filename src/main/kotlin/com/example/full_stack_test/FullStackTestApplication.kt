@@ -4,8 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class FullStackTestApplication {
-}
+class FullStackTestApplication
 
 
 fun main(args: Array<String>) {
