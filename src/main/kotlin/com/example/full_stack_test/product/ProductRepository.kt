@@ -25,4 +25,46 @@ class ProductRepository(
             .query(ProductRow::class.java)
             .list()
             .filterNotNull()
+
+
+    fun deleteAll() {
+        jdbc.sql("delete from products").update()
+    }
+
+    fun insertProduct(
+        externalId: Long,
+        title: String,
+        vendor: String?,
+        productType: String?
+    ): Long =
+        jdbc.sql(
+            """
+            insert into products (external_id, title, vendor, product_type)
+            values (:externalId, :title, :vendor, :productType)
+            returning id
+            """
+        )
+            .param("externalId", externalId)
+            .param("title", title)
+            .param("vendor", vendor)
+            .param("productType", productType)
+            .query(Long::class.java)
+            .single()
+
+    fun insertVariant(
+        productId: Long,
+        sku: String?,
+        price: java.math.BigDecimal?
+    ) {
+        jdbc.sql(
+            """
+            insert into variants (product_id, sku, price)
+            values (:productId, :sku, :price)
+            """
+        )
+            .param("productId", productId)
+            .param("sku", sku)
+            .param("price", price)
+            .update()
+    }
 }
