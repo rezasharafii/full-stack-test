@@ -1,4 +1,5 @@
 package com.example.full_stack_test.product
+
 import org.springframework.stereotype.Service
 import java.math.RoundingMode
 
@@ -37,4 +38,24 @@ class ProductService(
                 )
             }
     }
+
+    fun createProduct(form: ProductCreateForm) {
+        val productId = productRepository.insertManualProduct(
+            title = form.title,
+            vendor = form.vendor,
+            productType = form.productType
+        )
+
+        form.variants
+            .filter { it.sku != null && it.price != null }
+            .forEach { variant ->
+                productRepository.insertVariant(
+                    productId = productId,
+                    sku = variant.sku,
+                    price = variant.price
+                )
+            }
+    }
+
+
 }

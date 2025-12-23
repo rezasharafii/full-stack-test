@@ -88,4 +88,24 @@ class ProductRepository(
             .query(ProductVariantRow::class.java)
             .list().filterNotNull()
 
+
+    fun insertManualProduct(
+        title: String,
+        vendor: String?,
+        productType: String?
+    ): Long =
+        jdbc.sql(
+            """
+        insert into products (external_id, title, vendor, product_type)
+        values (:externalId, :title, :vendor, :productType)
+        returning id
+        """
+        )
+            .param("externalId", System.currentTimeMillis()) // simple unique id
+            .param("title", title)
+            .param("vendor", vendor)
+            .param("productType", productType)
+            .query(Long::class.java)
+            .single()
+
 }

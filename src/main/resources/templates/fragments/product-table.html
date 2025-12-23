@@ -1,4 +1,4 @@
-<table style="width: 100%; border-collapse: collapse; font-family: var(--wa-font-sans); font-size: var(--wa-font-size-s);">
+<table style="width: 100%; border-collapse: collapse; font-family: var(--wa-font-sans); font-size: var(--wa-font-size-s); ">
     <thead style="position: sticky; top: 0; z-index: 10; background-color: var(--wa-color-neutral-95); box-shadow: inset 0 -1px 0 var(--wa-color-neutral-200);">
     <tr>
         <th>Title</th>
@@ -11,7 +11,7 @@
     <tbody>
     <tr th:each="product : ${products}"
         style="border-bottom: 1px solid var(--wa-color-neutral-100); transition: background-color 0.2s;"
-        onmouseover="this.style.backgroundColor='var(--wa-color-neutral-70)'"
+        onmouseover="this.style.backgroundColor='var(--wa-color-neutral-80)'"
         onmouseout="this.style.backgroundColor='transparent'">
 
         <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-900);" th:text="${product.title}">Title

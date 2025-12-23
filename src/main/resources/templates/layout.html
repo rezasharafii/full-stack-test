@@ -50,7 +50,80 @@
             color: var(--wa-color-neutral-700);
             font-weight: var(--wa-font-weight-semibold);
         }
+
+        #custom-toast {
+            visibility: hidden;
+            min-width: 280px;
+            color: white;
+            text-align: center;
+            border-radius: var(--wa-border-radius-m, 4px);
+            padding: var(--wa-space-m, 16px);
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: var(--wa-shadow-l);
+            font-family: var(--wa-font-sans, sans-serif);
+            transition: background-color 0.3s;
+        }
+
+        #custom-toast.success {
+            background-color: var(--wa-color-success-40, #28a745);
+        }
+
+        #custom-toast.info {
+            background-color: var(--wa-color-brand-40, #17a2b8);
+        }
+
+        #custom-toast.danger {
+            background-color: var(--wa-color-danger-40, #dc3545);
+        }
+
+        #custom-toast.show {
+            visibility: visible;
+            animation: fade-in-out 5s ease-in-out forwards;
+        }
+
+        @keyframes fade-in-out {
+            0% {
+                bottom: 0;
+                opacity: 0;
+            }
+            10% {
+                bottom: 30px;
+                opacity: 1;
+            }
+            90% {
+                bottom: 30px;
+                opacity: 1;
+            }
+            100% {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
     </style>
+    <script>
+        function showToast(message, variant = 'success') {
+            const toast = document.getElementById("custom-toast");
+
+            toast.textContent = message;
+            toast.className = "";
+
+            void toast.offsetWidth;
+
+            toast.classList.add(variant, "show");
+
+            setTimeout(() => {
+                toast.classList.remove("show", variant);
+            }, 5100);
+        }
+
+    </script>
+
 </head>
 <body>
 <aside>
@@ -66,6 +139,8 @@
     </header>
 
     <div th:replace="${content}"></div>
+    <div id="custom-toast"></div>
+
 </main>
 </main>
 </body>
