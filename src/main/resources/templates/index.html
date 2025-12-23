@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::body})}">
+<body>
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--wa-space-l);">
+        <h3 style="margin: 0;">Product List</h3>
+        <wa-button
+                variant="primary"
+                hx-get="/products"
+                hx-target="#product-table"
+                hx-swap="innerHTML">
+            <wa-icon slot="prefix" name="plus"></wa-icon>
+            Load Products
+        </wa-button>
+    </div>
+
+    <div id="product-table" style="max-height: 500px; overflow-y: auto;">
+        <p style="color: var(--wa-color-neutral-500); text-align: center; padding: var(--wa-space-xl);">
+            No products loaded. Click "Load Products" to begin.
+        </p>
+    </div>
+</div>
+</body>
+</html>

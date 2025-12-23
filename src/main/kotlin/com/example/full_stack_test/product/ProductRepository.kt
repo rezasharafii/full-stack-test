@@ -67,4 +67,25 @@ class ProductRepository(
             .param("price", price)
             .update()
     }
+
+
+    fun findAllWithVariants(): List<ProductVariantRow> =
+        jdbc.sql(
+            """
+        select
+            p.id as productId,
+            p.title,
+            p.vendor,
+            p.product_type as productType,
+            p.created_at as createdAt,
+            v.sku,
+            v.price
+        from products p
+        left join variants v on v.product_id = p.id
+        order by p.created_at desc
+        """
+        )
+            .query(ProductVariantRow::class.java)
+            .list().filterNotNull()
+
 }

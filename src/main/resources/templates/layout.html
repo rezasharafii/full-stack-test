@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(content)">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Products</title>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+    <script src="https://kit.webawesome.com/23a000944d30477a.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+        }
+
+        body {
+            margin: 0;
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            min-height: 100vh;
+            background-color: var(--wa-color-neutral-95);
+            color: var(--wa-color-neutral-900);
+            font-family: var(--wa-font-sans);
+        }
+
+        aside {
+            background: white;
+            border-right: 1px solid var(--wa-color-neutral-200);
+            padding: var(--wa-space-l);
+        }
+
+        main {
+            padding: var(--wa-space-2xl);
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: var(--wa-space-2xl);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--wa-color-neutral-200);
+            border-radius: var(--wa-border-radius-m);
+            padding: var(--wa-space-l);
+            box-shadow: var(--wa-shadow-s);
+        }
+
+        th {
+            padding: var(--wa-space-m);
+            text-align: left;
+            color: var(--wa-color-neutral-700);
+            font-weight: var(--wa-font-weight-semibold);
+        }
+    </style>
+</head>
+<body>
+<aside>
+    <h2 style="margin-top: 0;">WA Admin</h2>
+    <nav style="display: flex; flex-direction: column; gap: var(--wa-space-s);">
+        <wa-button variant="text" size="small" style="width: 100%; justify-content: start;">Products</wa-button>
+    </nav>
+</aside>
+<main>
+    <header>
+        <h1 style="font-size: var(--wa-font-size-2xl);">Product Management</h1>
+        <p style="color: var(--wa-color-neutral-600);">Manage your inventory and product listings.</p>
+    </header>
+
+    <div th:replace="${content}"></div>
+</main>
+</main>
+</body>
+</html>

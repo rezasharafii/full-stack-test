@@ -1,14 +1,23 @@
 package com.example.full_stack_test.product
 
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 
-@RestController
+@Controller
 class ProductController(
     private val productService: ProductService
 ) {
 
-    @GetMapping("/api/products")
-    fun products(): List<ProductRow> =
-        productService.getAllProducts()
+    @GetMapping("/")
+    fun index(): String =
+        "index"
+
+    @GetMapping("/products")
+    fun products(model: Model): String {
+        model.addAttribute(
+            "products", productService.getAllProductsForView()
+        )
+        return "fragments/product-table"
+    }
 }
