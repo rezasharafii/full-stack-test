@@ -221,4 +221,39 @@ class ProductRepository(
             .param("productId", productId)
             .update()
     }
+
+
+    fun findAllWithVariantsSorted(sort: String, dir: String): List<ProductVariantRow> {
+
+        val sortColumn = when (sort) {
+            "title" -> "p.title"
+            "vendor" -> "p.vendor"
+            "type" -> "p.product_type"
+            "createdAt" -> "p.created_at"
+            else -> "p.created_at"
+        }
+
+        val direction = if (dir.equals("asc", true)) "asc" else "desc"
+
+        return jdbc.sql(
+            """
+        select
+            p.id as productId,
+            p.title,
+            p.vendor,
+            p.product_type as productType,
+            p.created_at as createdAt,
+            v.id as variantId,
+            v.sku,
+            v.price
+        from products p
+        left join variants v on v.product_id = p.id
+        order by $sortColumn $direction
+        """
+        )
+            .query(ProductVariantRow::class.java)
+            .list()
+            .filterNotNull()
+    }
+
 }

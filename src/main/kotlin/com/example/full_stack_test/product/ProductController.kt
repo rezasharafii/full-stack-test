@@ -13,9 +13,17 @@ class ProductController(
 
 
     @GetMapping
-    fun listProducts(model: Model): String {
-        val products = productService.getAllProductsForView()
+    fun listProducts(
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @RequestParam(required = false, defaultValue = "desc") dir: String,
+        model: Model
+    ): String {
+        val products = productService.getAllProductsForView(sort, dir)
+
         model.addAttribute("products", products)
+        model.addAttribute("sort", sort)
+        model.addAttribute("dir", dir)
+
         return "fragments/product-table"
     }
 

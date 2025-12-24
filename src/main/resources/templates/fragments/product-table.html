@@ -17,11 +17,65 @@
            style="width: 100%; border-collapse: collapse; font-family: var(--wa-font-sans); font-size: var(--wa-font-size-s); ">
         <thead style="position: sticky; top: 0; z-index: 10; background-color: var(--wa-color-neutral-95); box-shadow: inset 0 -1px 0 var(--wa-color-neutral-200);">
         <tr>
-            <th>Title</th>
-            <th>Vendor</th>
-            <th>Type</th>
+            <!-- Title -->
+            <th
+                    hx-get="/products"
+                    hx-target="#product-table"
+                    hx-swap="innerHTML"
+                    th:hx-vals="|js:{
+            sort: 'title',
+            dir: '${sort == 'title' && dir == 'asc' ? 'desc' : 'asc'}'
+        }|"
+                    style="cursor: pointer;">
+                Title
+                <span style="font-size: var(--wa-font-size-2xs)" th:if="${sort == 'title'}"
+                      th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+            </th>
+
+            <!-- Vendor -->
+            <th
+                    hx-get="/products"
+                    hx-target="#product-table"
+                    hx-swap="innerHTML"
+                    th:hx-vals="|js:{
+            sort: 'vendor',
+            dir: '${sort == 'vendor' && dir == 'asc' ? 'desc' : 'asc'}'
+        }|"
+                    style="cursor: pointer;">
+                Vendor
+                <span style="font-size: var(--wa-font-size-2xs)" th:if="${sort == 'vendor'}"
+                      th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+            </th>
+            <!-- Type -->
+            <th
+                    hx-get="/products"
+                    hx-target="#product-table"
+                    hx-swap="innerHTML"
+                    th:hx-vals="|js:{
+            sort: 'type',
+            dir: '${sort == 'type' && dir == 'asc' ? 'desc' : 'asc'}'
+        }|"
+                    style="cursor: pointer;">
+                Type
+                <span style="font-size: var(--wa-font-size-2xs)" th:if="${sort == 'type'}"
+                      th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+            </th>
             <th>Variants</th>
-            <th>Created</th>
+
+            <!-- Created -->
+            <th
+                    hx-get="/products"
+                    hx-target="#product-table"
+                    hx-swap="innerHTML"
+                    th:hx-vals="|js:{
+            sort: 'createdAt',
+            dir: '${sort == 'createdAt' && dir == 'asc' ? 'desc' : 'asc'}'
+        }|"
+                    style="cursor: pointer;">
+                Created
+                <span style="font-size: var(--wa-font-size-2xs)" th:if="${sort == 'createdAt'}"
+                      th:text="${dir == 'asc' ? '▲' : '▼'}"></span>
+            </th>
             <th>Actions</th>
         </tr>
         </thead>

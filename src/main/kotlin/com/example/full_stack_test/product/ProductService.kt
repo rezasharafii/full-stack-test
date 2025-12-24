@@ -41,8 +41,11 @@ class ProductService(
         productRepository.findAll()
 
 
-    fun getAllProductsForView(): List<ProductView> {
-        val rows = productRepository.findAllWithVariants()
+    fun getAllProductsForView(
+        sort: String = "createdAt",
+        dir: String = "desc"
+    ): List<ProductView> {
+        val rows = productRepository.findAllWithVariantsSorted(sort, dir)
         return mapToProductViews(rows)
     }
 
