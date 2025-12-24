@@ -108,4 +108,48 @@ class ProductRepository(
             .query(Long::class.java)
             .single()
 
+
+    fun findByTitle(title: String): List<ProductRow> =
+        jdbc.sql(
+            """
+            select
+                id,
+                external_id as externalId,
+                title,
+                vendor,
+                product_type as productType,
+                created_at as createdAt
+            from products
+            where title ilike :title
+            order by created_at desc
+            """
+        )
+            .param("title", "%$title%")
+            .query(ProductRow::class.java)
+            .list()
+            .filterNotNull()
+
+
+    fun findByTitleWithVariants(title: String): List<ProductVariantRow> =
+        jdbc.sql(
+            """
+        select
+            p.id as productId,
+            p.title,
+            p.vendor,
+            p.product_type as productType,
+            p.created_at as createdAt,
+            v.sku,
+            v.price
+        from products p
+        left join variants v on v.product_id = p.id
+        where p.title ilike :title
+        order by p.created_at desc
+        """
+        )
+            .param("title", "%$title%")
+            .query(ProductVariantRow::class.java)
+            .list()
+            .filterNotNull()
+
 }

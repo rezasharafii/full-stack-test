@@ -8,13 +8,7 @@ class ProductService(
     private val productRepository: ProductRepository
 ) {
 
-    fun getAllProducts(): List<ProductRow> =
-        productRepository.findAll()
-
-
-    fun getAllProductsForView(): List<ProductView> {
-        val rows = productRepository.findAllWithVariants()
-
+    private fun mapToProductViews(rows: List<ProductVariantRow>): List<ProductView> {
         return rows
             .groupBy { it.productId }
             .map { (_, productRows) ->
@@ -39,6 +33,17 @@ class ProductService(
             }
     }
 
+
+    fun getAllProducts(): List<ProductRow> =
+        productRepository.findAll()
+
+
+    fun getAllProductsForView(): List<ProductView> {
+        val rows = productRepository.findAllWithVariants()
+        return mapToProductViews(rows)
+    }
+
+
     fun createProduct(form: ProductCreateForm) {
         val productId = productRepository.insertManualProduct(
             title = form.title,
@@ -56,6 +61,26 @@ class ProductService(
                 )
             }
     }
+
+
+    fun searchProductsByTitle(title: String?): List<ProductRow> {
+        return if (title.isNullOrBlank()) {
+            productRepository.findAll()
+        } else {
+            productRepository.findByTitle(title.trim())
+        }
+    }
+
+    fun searchProductsForView(title: String?): List<ProductView> {
+        val rows = if (title.isNullOrBlank()) {
+            productRepository.findAllWithVariants()
+        } else {
+            productRepository.findByTitleWithVariants(title.trim())
+        }
+
+        return mapToProductViews(rows)
+    }
+
 
 
 }

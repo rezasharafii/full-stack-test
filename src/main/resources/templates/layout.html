@@ -129,7 +129,27 @@
 <aside>
     <h2 style="margin-top: 0;">WA Admin</h2>
     <nav style="display: flex; flex-direction: column; gap: var(--wa-space-s);">
-        <wa-button variant="text" size="small" style="width: 100%; justify-content: start;">Products</wa-button>
+        <wa-button
+                variant="text"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Products
+        </wa-button>
+
+        <wa-button
+                variant="text"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/search"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Search Products
+        </wa-button>
     </nav>
 </aside>
 <main>
@@ -138,7 +158,9 @@
         <p style="color: var(--wa-color-neutral-600);">Manage your inventory and product listings.</p>
     </header>
 
-    <div th:replace="${content}"></div>
+    <div id="main-content">
+        <div th:replace="${content}"></div>
+    </div>
     <div id="custom-toast"></div>
 
 </main>

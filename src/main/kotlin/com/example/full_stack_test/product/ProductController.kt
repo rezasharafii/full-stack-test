@@ -35,9 +35,20 @@ class ProductController(
         model: Model
     ): String {
         productService.createProduct(form)
-
         model.addAttribute("products", productService.getAllProductsForView())
-
         return "fragments/product-table"
     }
+
+
+    @GetMapping("/search")
+    fun searchProducts(
+        @RequestParam(required = false) title: String?,
+        model: Model
+    ): String {
+        val products = productService.searchProductsForView(title)
+        model.addAttribute("products", products)
+        return "fragments/product-table"
+    }
+
+
 }
