@@ -22,12 +22,13 @@
             <th>Type</th>
             <th>Variants</th>
             <th>Created</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="product : ${products}"
             style="border-bottom: 1px solid var(--wa-color-neutral-100); transition: background-color 0.2s;"
-            onmouseover="this.style.backgroundColor='var(--wa-color-neutral-80)'"
+            onmouseover="this.style.backgroundColor='var(--wa-color-neutral-90)'"
             onmouseout="this.style.backgroundColor='transparent'">
 
             <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-900);" th:text="${product.title}">Title
@@ -62,6 +63,18 @@
             <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-500); font-variant-numeric: tabular-nums;"
                 th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}">
                 Date
+            </td>
+            <td>
+                <wa-button
+                        size="small"
+                        variant="neutral"
+                        appearance="filled-outlined"
+                        th:hx-get="|/products/${product.id}/edit|"
+                        hx-target="#main-content"
+                        hx-select="#main-content"
+                        th:hx-push-url="true">
+                    <wa-icon name="pen-to-square"></wa-icon>
+                </wa-button>
             </td>
         </tr>
         </tbody>

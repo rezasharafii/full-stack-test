@@ -1,6 +1,7 @@
 package com.example.full_stack_test.product
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.math.RoundingMode
 
 @Service
@@ -15,6 +16,7 @@ class ProductService(
                 val first = productRows.first()
 
                 ProductView(
+                    id = first.productId,
                     title = first.title,
                     vendor = first.vendor,
                     productType = first.productType,
@@ -23,6 +25,7 @@ class ProductService(
                         .filter { it.sku != null }
                         .map {
                             VariantView(
+                                id = it.variantId,
                                 sku = it.sku,
                                 price = it.price
                                     ?.setScale(2, RoundingMode.HALF_UP)
@@ -81,6 +84,68 @@ class ProductService(
         return mapToProductViews(rows)
     }
 
+
+    fun getProductForUpdate(productId: Long): ProductView {
+        val rows = productRepository.findByIdWithVariants(productId)
+
+        if (rows.isEmpty()) {
+            throw IllegalArgumentException("Product not found")
+        }
+
+        val first = rows.first()
+
+        return ProductView(
+            id = first.productId,
+            title = first.title,
+            vendor = first.vendor,
+            productType = first.productType,
+            createdAt = first.createdAt,
+            variants = rows
+                .filter { it.sku != null }
+                .map {
+                    VariantView(
+                        id = it.variantId,
+                        sku = it.sku,
+                        price = it.price
+                            ?.setScale(2, RoundingMode.HALF_UP)
+                            ?.toPlainString()
+                    )
+                }
+        )
+    }
+
+    @Transactional
+    fun updateProduct(productId: Long, form: ProductCreateForm) {
+
+        /* -------------------------
+         * 1. Update product
+         * ------------------------- */
+        productRepository.updateManualProduct(
+            id = productId,
+            title = form.title,
+            vendor = form.vendor,
+            productType = form.productType
+        )
+
+        /* -------------------------
+         * 2. Remove existing variants
+         * ------------------------- */
+        productRepository.deleteVariantsByProductId(productId)
+
+        /* -------------------------
+         * 3. Reinsert submitted variants
+         * ------------------------- */
+        form.variants
+            .filterNotNull()
+            .filter { !it.sku.isNullOrBlank() }
+            .forEach { variant ->
+                productRepository.insertVariant(
+                    productId = productId,
+                    sku = variant.sku,
+                    price = variant.price
+                )
+            }
+    }
 
 
 }

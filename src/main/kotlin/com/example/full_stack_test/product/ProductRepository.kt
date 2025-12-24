@@ -78,6 +78,7 @@ class ProductRepository(
             p.vendor,
             p.product_type as productType,
             p.created_at as createdAt,
+            v.id as variantId,
             v.sku,
             v.price
         from products p
@@ -139,6 +140,7 @@ class ProductRepository(
             p.vendor,
             p.product_type as productType,
             p.created_at as createdAt,
+            v.id as variantId,
             v.sku,
             v.price
         from products p
@@ -151,5 +153,63 @@ class ProductRepository(
             .query(ProductVariantRow::class.java)
             .list()
             .filterNotNull()
+
+
+    fun findByIdWithVariants(productId: Long): List<ProductVariantRow> =
+        jdbc.sql(
+            """
+        select
+            p.id as productId,
+            p.title,
+            p.vendor,
+            p.product_type as productType,
+            p.created_at as createdAt,
+            v.id as variantId,
+            v.sku,
+            v.price
+        from products p
+        left join variants v on v.product_id = p.id
+        where p.id = :productId
+        """
+        )
+            .param("productId", productId)
+            .query(ProductVariantRow::class.java)
+            .list()
+            .filterNotNull()
+
+    fun updateManualProduct(
+        id: Long,
+        title: String,
+        vendor: String?,
+        productType: String?
+    ) {
+        jdbc.sql(
+            """
+        update products
+        set
+            title = :title,
+            vendor = :vendor,
+            product_type = :productType
+        where id = :id
+        """
+        )
+            .param("id", id)
+            .param("title", title)
+            .param("vendor", vendor)
+            .param("productType", productType)
+            .update()
+    }
+
+    fun deleteVariantsByProductId(productId: Long) {
+        jdbc.sql(
+            """
+        delete from variants
+        where product_id = :productId
+        """
+        )
+            .param("productId", productId)
+            .update()
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.full_stack_test.product
 
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -10,8 +11,6 @@ class ProductController(
     private val productService: ProductService
 ) {
 
-    @GetMapping("/view")
-    fun viewDashboard(): String = "index"
 
     @GetMapping
     fun listProducts(model: Model): String {
@@ -23,11 +22,16 @@ class ProductController(
     @GetMapping("/variant-row")
     fun getVariantRowFragment(
         @RequestParam(defaultValue = "0") index: Int,
+        @RequestParam(required = false) sku: String?,
+        @RequestParam(required = false) price: String?,
         model: Model
     ): String {
         model.addAttribute("index", index)
+        model.addAttribute("sku", sku)
+        model.addAttribute("price", price)
         return "fragments/variant-row"
     }
+
 
     @PostMapping
     fun createProduct(
@@ -48,6 +52,30 @@ class ProductController(
         val products = productService.searchProductsForView(title)
         model.addAttribute("products", products)
         return "fragments/product-table"
+    }
+
+    @GetMapping("/{id}/edit")
+    fun editProductPage(
+        @PathVariable id: Long,
+        model: Model
+    ): String {
+        val product = productService.getProductForUpdate(id)
+        model.addAttribute("product", product)
+        return "/edit"
+    }
+
+    @PutMapping("/{id}/edit")
+    fun updateProduct(
+        @PathVariable id: Long,
+        @ModelAttribute form: ProductCreateForm,
+        model: Model
+    ): ResponseEntity<Unit> {
+        productService.updateProduct(id, form)
+
+        val products = productService.getAllProductsForView()
+        model.addAttribute("products", products)
+
+        return ResponseEntity.noContent().build()
     }
 
 

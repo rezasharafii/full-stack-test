@@ -1,5 +1,9 @@
 <div class="variant-row"
-     style="display: grid; grid-template-columns: 1fr 1fr auto; gap: var(--wa-space-s); align-items: end;  padding: var(--wa-space-s);">
+     style="display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: var(--wa-space-s);
+            align-items: end;
+            padding: var(--wa-space-s);">
 
     <wa-input
             type="text"
@@ -7,7 +11,8 @@
             label="SKU"
             size="small"
             required
-    ></wa-input>
+            th:value="${sku}">
+    </wa-input>
 
     <wa-input
             type="number"
@@ -16,7 +21,7 @@
             size="small"
             step="0.01"
             required
-    >
+            th:value="${price}">
     </wa-input>
 
     <wa-button
