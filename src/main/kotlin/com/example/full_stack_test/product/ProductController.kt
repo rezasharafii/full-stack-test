@@ -78,5 +78,18 @@ class ProductController(
         return ResponseEntity.noContent().build()
     }
 
+    @DeleteMapping("/{id}")
+    fun deleteProduct(
+        @PathVariable id: Long,
+        model: Model
+    ): String {
+
+        productService.deleteProduct(id)
+
+        val products = productService.getAllProductsForView()
+        model.addAttribute("products", products)
+
+        return "fragments/product-table"
+    }
 
 }

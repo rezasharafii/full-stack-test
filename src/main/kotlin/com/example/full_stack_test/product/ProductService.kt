@@ -147,5 +147,11 @@ class ProductService(
             }
     }
 
+    @Transactional
+    fun deleteProduct(productId: Long) {
+        productRepository.deleteVariantsByProductId(productId)
+        productRepository.deleteProductById(productId)
+    }
+
 
 }

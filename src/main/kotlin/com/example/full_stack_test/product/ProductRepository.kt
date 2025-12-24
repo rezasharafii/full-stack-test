@@ -211,5 +211,14 @@ class ProductRepository(
             .update()
     }
 
-
+    fun deleteProductById(productId: Long) {
+        jdbc.sql(
+            """
+        delete from products
+        where id = :productId
+        """
+        )
+            .param("productId", productId)
+            .update()
+    }
 }

@@ -64,7 +64,7 @@
                 th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}">
                 Date
             </td>
-            <td>
+            <td style="display: flex; align-items: center; justify-content: center; gap: var(--wa-space-m);">
                 <wa-button
                         size="small"
                         variant="neutral"
@@ -75,8 +75,51 @@
                         th:hx-push-url="true">
                     <wa-icon name="pen-to-square"></wa-icon>
                 </wa-button>
+                <wa-button
+                        variant="danger"
+                        size="small"
+                        appearance="filled-outlined"
+                        th:hx-on:click="|document.getElementById('delete-dialog-${product.id}').showModal()|">
+                    <wa-icon name="trash"></wa-icon>
+
+                </wa-button>
             </td>
+            <dialog th:id="|delete-dialog-${product.id}|" class="card">
+                <form
+                        method="dialog"
+                        style="padding: var(--wa-space-l); min-width: 320px; width: 100%">
+
+                    <h4 style="margin-top: 0;">Delete Product</h4>
+
+                    <p>
+                        Are you sure you want to delete
+                        <strong th:text="${product.title}"></strong>?
+                    </p>
+
+                    <div style="display: flex; justify-content: flex-end; gap: var(--wa-space-s); width: 100%;">
+
+                        <wa-button type="button"
+                                   variant="neutral"
+                                   onclick="this.closest('dialog').close()">
+                            Cancel
+                        </wa-button>
+
+                        <wa-button
+                                th:type="submit"
+                                variant="danger"
+                                th:hx-delete="|/products/${product.id}|"
+                                hx-target="#product-table"
+                                hx-swap="innerHTML"
+                        >
+                            Delete
+                        </wa-button>
+
+                    </div>
+                </form>
+            </dialog>
+
         </tr>
         </tbody>
     </table>
+
 </div>
