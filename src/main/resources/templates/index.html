@@ -34,8 +34,12 @@
             <form hx-post="/products"
                   hx-target="#product-table"
                   hx-swap="innerHTML"
-                  hx-on:htmx:after-request="if(event.detail.successful) { this.reset(); showToast('Product added successfully!', 'success'); }"
-                  style="display: flex; flex-direction: column; gap: var(--wa-space-l);">
+                  hx-on:htmx:after-request="
+        if(event.detail.successful && event.detail.pathInfo.requestPath === '/products') {
+            this.reset();
+            document.getElementById('variants').innerHTML = '';
+            showToast('Product added successfully!', 'success');
+        }" style="display: flex; flex-direction: column; gap: var(--wa-space-l);">
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--wa-space-m);">
                     <wa-input name="title" label="Product Title" placeholder="e.g. Wireless Mouse" required clearable
@@ -47,7 +51,7 @@
                 <div style="border-top: 1px solid var(--wa-color-neutral-100); padding-top: var(--wa-space-l);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--wa-space-m);">
                         <h4 style="margin: 0; color: var(--wa-color-neutral-700);">Variants</h4>
-                        <wa-button type="button"
+                        <wa-button th:type="button"
                                    variant="neutral"
                                    size="small"
                                    appearance="filled-outlined"
