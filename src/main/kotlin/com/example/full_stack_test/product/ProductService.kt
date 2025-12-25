@@ -58,6 +58,7 @@ class ProductService(
         )
 
         form.variants
+            .filterNotNull()
             .filter { it.sku != null && it.price != null }
             .forEach { variant ->
                 productRepository.insertVariant(
