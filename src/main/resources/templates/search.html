@@ -10,7 +10,7 @@
         <h3 style="margin: 0;">Product Search</h3>
 
         <wa-button
-                variant="primary"
+                variant="neutral"
                 hx-get="/products"
                 hx-target="#product-table"
                 hx-swap="innerHTML">
@@ -23,7 +23,6 @@
         <wa-input
                 name="title"
                 placeholder="Search products by title..."
-                clearable
                 hx-get="/products/search"
                 hx-trigger="keyup changed delay:300ms"
                 hx-target="#product-table"
@@ -39,7 +38,7 @@
                 border-radius: var(--wa-border-radius-m);
                 box-shadow: var(--wa-shadow-l);">
 
-        <p style="color: var(--wa-color-neutral-500);
+        <p style="color: var(--wa-color-neutral-50);
                   text-align: center;
                   padding: var(--wa-space-xl);">
             Start typing to search products by title.

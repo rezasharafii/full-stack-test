@@ -1,0 +1,7 @@
+{
+  "name": "full-stack-test",
+  "version": "1.0.0",
+  "dependencies": {
+    "@awesome.me/webawesome": "^3.1.0"
+  }
+}

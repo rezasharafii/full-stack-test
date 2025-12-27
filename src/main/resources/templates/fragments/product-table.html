@@ -4,7 +4,7 @@
     <div th:if="${#lists.isEmpty(products)}"
          style="padding: var(--wa-space-xl);
                 text-align: center;
-                color: var(--wa-color-neutral-500);">
+                color: var(--wa-color-neutral-50);">
 
         <wa-icon name="search" style="font-size: 2rem; margin-bottom: var(--wa-space-s);"></wa-icon>
 
@@ -14,8 +14,8 @@
     </div>
 
     <table th:if="${!#lists.isEmpty(products)}"
-           style="width: 100%; border-collapse: collapse; font-family: var(--wa-font-sans); font-size: var(--wa-font-size-s); ">
-        <thead style="position: sticky; top: 0; z-index: 10; background-color: var(--wa-color-neutral-95); box-shadow: inset 0 -1px 0 var(--wa-color-neutral-200);">
+           style="width: 100%; border-collapse: collapse; font-size: var(--wa-font-size-s); ">
+        <thead style="position: sticky; top: 0; z-index: 10; background-color: var(--wa-color-neutral-95); box-shadow: inset 0 -1px 0 var(--wa-color-neutral-90);">
         <tr>
             <!-- Title -->
             <th
@@ -81,13 +81,13 @@
         </thead>
         <tbody>
         <tr th:each="product : ${products}"
-            style="border-bottom: 1px solid var(--wa-color-neutral-100); transition: background-color 0.2s;"
+            style="border-bottom: 1px solid var(--wa-color-neutral-80); transition: background-color 0.2s;"
             onmouseover="this.style.backgroundColor='var(--wa-color-neutral-90)'"
             onmouseout="this.style.backgroundColor='transparent'">
 
-            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-900);" th:text="${product.title}">Title
+            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-40);" th:text="${product.title}">Title
             </td>
-            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-600);" th:text="${product.vendor}">
+            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-50);" th:text="${product.vendor}">
                 Vendor
             </td>
             <td style="padding: var(--wa-space-m);">
@@ -100,7 +100,7 @@
                 </wa-badge>
 
                 <span th:unless="${not #strings.isEmpty(product.productType)}"
-                      style="color: var(--wa-color-neutral-400);">
+                      style="color: var(--wa-color-neutral-50);">
         —
     </span>
             </td>
@@ -114,7 +114,7 @@
                     </li>
                 </ul>
             </td>
-            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-500); font-variant-numeric: tabular-nums;"
+            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-50); font-variant-numeric: tabular-nums;"
                 th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd HH:mm')}">
                 Date
             </td>

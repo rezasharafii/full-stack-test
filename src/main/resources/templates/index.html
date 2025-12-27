@@ -7,7 +7,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--wa-space-l);">
         <h3 style="margin: 0;">Product List</h3>
         <wa-button
-                variant="primary"
+                variant="neutral"
                 hx-get="/products"
                 hx-target="#product-table"
                 hx-swap="innerHTML"
@@ -20,7 +20,7 @@
 
     <div id="product-table"
          style="max-height: 500px; overflow: hidden; overflow-y: auto; border-radius: var(--wa-border-radius-m); box-shadow: var(--wa-shadow-l) ">
-        <p style="color: var(--wa-color-neutral-500); text-align: center; padding: var(--wa-space-xl);">
+        <p style="color: var(--wa-color-neutral-50); text-align: center; padding: var(--wa-space-xl);">
             No products loaded. Click "Load Products" to begin.
         </p>
     </div>
@@ -49,9 +49,9 @@
                     <wa-input name="productType" label="Type" placeholder="Category"></wa-input>
                 </div>
 
-                <div style="border-top: 1px solid var(--wa-color-neutral-100); padding-top: var(--wa-space-l);">
+                <div style="border-top: 1px solid var(--wa-color-neutral-80); padding-top: var(--wa-space-l);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--wa-space-m);">
-                        <h4 style="margin: 0; color: var(--wa-color-neutral-700);">Variants</h4>
+                        <h4 style="margin: 0; color: var(--wa-color-neutral-30);">Variants</h4>
                         <wa-button th:type="button"
                                    variant="neutral"
                                    size="small"
@@ -70,7 +70,7 @@
                     </div>
                 </div>
 
-                <div style="margin-top: var(--wa-space-m); border-top: 1px solid var(--wa-color-neutral-100); padding-top: var(--wa-space-l);">
+                <div style="margin-top: var(--wa-space-m); border-top: 1px solid var(--wa-color-neutral-80); padding-top: var(--wa-space-l);">
                     <wa-button variant="success" style="width: fit-content" th:type="submit"
                     >
                         <wa-icon slot="prefix" name="check"></wa-icon>
