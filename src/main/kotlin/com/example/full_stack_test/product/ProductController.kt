@@ -67,7 +67,7 @@ class ProductController(
         @PathVariable id: Long,
         model: Model
     ): String {
-        val product = productService.getProductForUpdate(id)
+        val product = productService.getProductById(id)
         model.addAttribute("product", product)
         return "/edit"
     }

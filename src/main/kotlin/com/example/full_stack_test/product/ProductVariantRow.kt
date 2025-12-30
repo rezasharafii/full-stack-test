@@ -11,5 +11,5 @@ data class ProductVariantRow(
     val createdAt: OffsetDateTime,
     val sku: String?,
     val price: BigDecimal?,
-    val variantId : Long
+    val variantId : Long?
 )

@@ -2,6 +2,7 @@ package com.example.full_stack_test.sync
 
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 
 @Component
 class FammeClient(
@@ -12,6 +13,6 @@ class FammeClient(
         restClient.get()
             .uri("/products.json")
             .retrieve()
-            .body(FammeResponse::class.java)
+            .body<FammeResponse>()
             ?: throw IllegalStateException("Failed to fetch products from Famme")
 }

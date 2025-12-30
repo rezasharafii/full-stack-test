@@ -19,6 +19,7 @@ data class FammeProduct(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class FammeVariant(
+    val id: Long,
     val sku: String?,
     val price: BigDecimal?
 )

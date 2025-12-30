@@ -2,29 +2,12 @@ package com.example.full_stack_test.product
 
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Repository
+import kotlin.random.Random
 
 @Repository
 class ProductRepository(
     private val jdbc: JdbcClient
 ) {
-
-    fun findAll(): List<ProductRow> =
-        jdbc.sql(
-            """
-            select
-                id,
-                external_id as externalId,
-                title,
-                vendor,
-                product_type as productType,
-                created_at as createdAt
-            from products
-            order by created_at desc
-            """
-        )
-            .query(ProductRow::class.java)
-            .list()
-            .filterNotNull()
 
 
     fun deleteAll() {
@@ -55,18 +38,19 @@ class ProductRepository(
         productId: Long,
         sku: String?,
         price: java.math.BigDecimal?
-    ) {
+    ): Long =
         jdbc.sql(
             """
             insert into variants (product_id, sku, price)
             values (:productId, :sku, :price)
+            returning id
             """
         )
             .param("productId", productId)
             .param("sku", sku)
             .param("price", price)
-            .update()
-    }
+            .query(Long::class.java)
+            .single()
 
 
     fun findAllWithVariants(): List<ProductVariantRow> =
@@ -102,33 +86,13 @@ class ProductRepository(
         returning id
         """
         )
-            .param("externalId", System.currentTimeMillis()) // simple unique id
+            .param("externalId", Random.nextInt()) // simple unique id
             .param("title", title)
             .param("vendor", vendor)
             .param("productType", productType)
             .query(Long::class.java)
             .single()
 
-
-    fun findByTitle(title: String): List<ProductRow> =
-        jdbc.sql(
-            """
-            select
-                id,
-                external_id as externalId,
-                title,
-                vendor,
-                product_type as productType,
-                created_at as createdAt
-            from products
-            where title ilike :title
-            order by created_at desc
-            """
-        )
-            .param("title", "%$title%")
-            .query(ProductRow::class.java)
-            .list()
-            .filterNotNull()
 
 
     fun findByTitleWithVariants(title: String): List<ProductVariantRow> =
@@ -255,5 +219,17 @@ class ProductRepository(
             .list()
             .filterNotNull()
     }
+
+
+    fun findVariantById(variantId: Long): VariantRow? = jdbc.sql(
+        """
+            select
+               *
+            from variants
+            where id = :variantId
+            """
+    )
+        .param("variantId", variantId)
+        .query(VariantRow::class.java).single()
 
 }

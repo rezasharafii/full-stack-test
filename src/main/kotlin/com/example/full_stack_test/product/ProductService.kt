@@ -2,6 +2,7 @@ package com.example.full_stack_test.product
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
@@ -22,11 +23,11 @@ class ProductService(
                     productType = first.productType,
                     createdAt = first.createdAt,
                     variants = productRows
-                        .filter { it.sku != null }
+                        .filter { it.variantId != null }
                         .map {
                             VariantView(
-                                id = it.variantId,
-                                sku = it.sku,
+                                id = it.variantId!!,
+                                sku = it.sku!!,
                                 price = it.price
                                     ?.setScale(2, RoundingMode.HALF_UP)
                                     ?.toPlainString()
@@ -35,10 +36,6 @@ class ProductService(
                 )
             }
     }
-
-
-    fun getAllProducts(): List<ProductRow> =
-        productRepository.findAll()
 
 
     fun getAllProductsForView(
@@ -56,27 +53,20 @@ class ProductService(
             vendor = form.vendor,
             productType = form.productType
         )
-
-        form.variants
-            .filterNotNull()
-            .filter { it.sku != null && it.price != null }
-            .forEach { variant ->
-                productRepository.insertVariant(
-                    productId = productId,
-                    sku = variant.sku,
-                    price = variant.price
-                )
-            }
-    }
-
-
-    fun searchProductsByTitle(title: String?): List<ProductRow> {
-        return if (title.isNullOrBlank()) {
-            productRepository.findAll()
-        } else {
-            productRepository.findByTitle(title.trim())
+        if (form.variants.isNotEmpty()) {
+            form.variants
+                .filterNotNull()
+                .filter { it.sku != null && it.price != null }
+                .forEach { variant ->
+                    productRepository.insertVariant(
+                        productId = productId,
+                        sku = variant.sku,
+                        price = variant.price
+                    )
+                }
         }
     }
+
 
     fun searchProductsForView(title: String?): List<ProductView> {
         val rows = if (title.isNullOrBlank()) {
@@ -89,7 +79,7 @@ class ProductService(
     }
 
 
-    fun getProductForUpdate(productId: Long): ProductView {
+    fun getProductById(productId: Long): ProductView {
         val rows = productRepository.findByIdWithVariants(productId)
 
         if (rows.isEmpty()) {
@@ -139,16 +129,18 @@ class ProductService(
         /* -------------------------
          * 3. Reinsert submitted variants
          * ------------------------- */
-        form.variants
-            .filterNotNull()
-            .filter { !it.sku.isNullOrBlank() }
-            .forEach { variant ->
-                productRepository.insertVariant(
-                    productId = productId,
-                    sku = variant.sku,
-                    price = variant.price
-                )
-            }
+        if (form.variants.isNotEmpty()) {
+            form.variants
+                .filterNotNull()
+                .filter { !it.sku.isNullOrBlank() }
+                .forEach { variant ->
+                    productRepository.insertVariant(
+                        productId = productId,
+                        sku = variant.sku,
+                        price = variant.price
+                    )
+                }
+        }
     }
 
     @Transactional
@@ -157,5 +149,9 @@ class ProductService(
         productRepository.deleteProductById(productId)
     }
 
-
+    fun getVariantPrice(variantId: Long): BigDecimal {
+        return productRepository.findVariantById(variantId)
+            ?.price
+            ?: throw IllegalStateException("Variant $variantId has no price")
+    }
 }

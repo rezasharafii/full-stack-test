@@ -7,8 +7,11 @@ data class ProductCreateForm(
     @field:NotBlank
     val title: String,
 
-    val vendor: String?,
-    val productType: String?,
+    @field:NotBlank
+    val vendor: String,
+
+    @field:NotBlank
+    val productType: String,
 
     val variants: List<VariantCreateForm> = emptyList()
 )
