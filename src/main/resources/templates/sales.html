@@ -12,15 +12,19 @@
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--wa-space-m); margin-bottom: var(--wa-space-xl);">
         <div class="card" style=" background: var(--wa-color-brand-95);">
             <small>Monthly Revenue</small>
-            <h2 th:text="'$' + ${#numbers.formatDecimal(summary.totalRevenue, 1, 'COMMA', 2, 'POINT')}">
-                $0.00
+            <h2>
+                <wa-format-number type="currency" currency="USD" th:value="${summary.totalRevenue}"
+                                  lang="en-US"></wa-format-number>
             </h2>
         </div>
         <div class="card">
             <small>Tax Collected</small>
-            <h2 th:text="'$' + ${#numbers.formatDecimal(summary.totalTax, 1, 'COMMA', 2, 'POINT')}">
-                $0.00
+            <h2>
+                <wa-format-number type="currency" currency="USD" th:value="${summary.totalTax}"
+                                  lang="en-US"></wa-format-number>
             </h2>
+
+
         </div>
         <div class="card">
             <small>Transactions</small>
@@ -48,10 +52,18 @@
                 <td style="padding: var(--wa-space-m);" th:text="${sale.sku}">SKU</td>
                 <td style="padding: var(--wa-space-m);" th:text="${sale.quantity}">Quantity</td>
                 <td style="padding: var(--wa-space-m); text-align: right; font-weight: bold;"
-                    th:text="'$' + ${#numbers.formatDecimal(sale.totalAmount, 1, 'COMMA', 2, 'POINT')}">Amount
+                >
+                    <wa-format-number
+                            type="currency"
+                            currency="USD"
+                            th:attr="value=${sale.totalAmount}"
+                            lang="en-US">
+                    </wa-format-number>
                 </td>
                 <td style="padding: var(--wa-space-m); text-align: right; color: var(--wa-color-neutral-50);"
-                    th:text="${#temporals.format(sale.soldAt, 'yyyy-MM-dd HH:mm')}">Date
+                >
+                    <wa-format-date month="numeric" day="numeric" year="numeric" hour="numeric" minute="numeric" th:date="${sale.soldAt}"></wa-format-date>
+
                 </td>
             </tr>
             </tbody>
