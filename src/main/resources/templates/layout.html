@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Products</title>
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-alpha5/dist/htmx.min.js"
+            integrity="sha384-LAnQFtNXh8s0hn9mOc8bezfn16i4Zo4y3i4dMT8PtV9yip8jGehR3RxCJrmHV11d"
+            crossorigin="anonymous"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>-->
+
     <script src="https://kit.webawesome.com/23a000944d30477a.js" crossorigin="anonymous"></script>
     <style>
         :root {
@@ -148,12 +152,23 @@
                 hx-push-url="true">
             Search Products
         </wa-button>
+
+        <wa-button
+                variant="neutral"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/sales"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Products Sales
+        </wa-button>
     </nav>
 </aside>
 <main>
     <header>
         <h1 style="font-size: var(--wa-font-size-2xl);">Product Management</h1>
-        <p >Manage your inventory and product listings.</p>
+        <p>Manage your inventory and product listings.</p>
     </header>
 
     <div id="main-content">

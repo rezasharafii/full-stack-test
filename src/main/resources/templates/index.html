@@ -11,7 +11,7 @@
                 hx-get="/products"
                 hx-target="#product-table"
                 hx-swap="innerHTML"
-                hx-on::after-request="document.getElementById('form-container').style.display = 'block'">
+                hx-on:htmx:after:request="document.getElementById('form-container').style.display = 'block'">
 
             <wa-icon slot="prefix" name="plus"></wa-icon>
             Load Products
@@ -34,8 +34,8 @@
             <form hx-post="/products"
                   hx-target="#product-table"
                   hx-swap="innerHTML"
-                  hx-on:htmx:after-request="
-        if(event.detail.successful && event.detail.pathInfo.requestPath === '/products') {
+                  hx-on:htmx:after:request="
+        if(event.detail.ctx.response.status == 200 && event.detail.ctx.request.action === '/products') {
             this.reset();
             document.getElementById('variants').innerHTML = '';
             showToast('Product added successfully!', 'success');

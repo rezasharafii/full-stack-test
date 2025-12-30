@@ -85,7 +85,7 @@
             onmouseover="this.style.backgroundColor='var(--wa-color-neutral-90)'"
             onmouseout="this.style.backgroundColor='transparent'">
 
-            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-40);" th:text="${product.title}">Title
+            <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-30);" th:text="${product.title}">Title
             </td>
             <td style="padding: var(--wa-space-m); color: var(--wa-color-neutral-50);" th:text="${product.vendor}">
                 Vendor
@@ -129,6 +129,16 @@
                         th:hx-push-url="true">
                     <wa-icon name="pen-to-square"></wa-icon>
                 </wa-button>
+                <wa-button
+                        size="small"
+                        variant="success"
+                        appearance="filled-outlined"
+                        th:hx-get="|/sales/new?productId=${product.id}|"
+                        hx-target="body"
+                        hx-swap="beforeend">
+                    <wa-icon name="cart-plus"></wa-icon>
+                </wa-button>
+
                 <wa-button
                         variant="danger"
                         size="small"

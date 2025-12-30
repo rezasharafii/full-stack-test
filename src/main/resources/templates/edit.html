@@ -12,11 +12,12 @@
     </h3>
 
     <form th:hx-put="|/products/${product.id}/edit|"
-          hx-on:htmx:after-request="
-        const isForm = event.detail.elt === this;
-        const isSuccess = event.detail.successful;
+          hx-on:htmx:after:request="
 
-        if (isSuccess && isForm) {
+        const isUpdate = event.detail.ctx.request.method === 'PUT';
+        const isSuccess = event.detail.ctx.response.status == 204;
+
+        if (isSuccess && isUpdate) {
             showToast('Product updated successfully!', 'success');
         }"
           style="display: flex; flex-direction: column; gap: var(--wa-space-l);">
@@ -80,7 +81,7 @@
 
 
         <!-- Submit -->
-        <wa-button variant="success" style="width: fit-content"  th:type="submit">
+        <wa-button variant="success" style="width: fit-content" th:type="submit">
             Save Changes
         </wa-button>
 
