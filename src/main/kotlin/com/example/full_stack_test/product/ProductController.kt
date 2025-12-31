@@ -16,11 +16,18 @@ class ProductController(
     fun listProducts(
         @RequestParam(required = false, defaultValue = "createdAt") sort: String,
         @RequestParam(required = false, defaultValue = "desc") dir: String,
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") size: Int,
         model: Model
     ): String {
-        val products = productService.getAllProductsForView(sort, dir)
+        val productPage = productService.getProductPageForView(sort, dir, page, size)
 
-        model.addAttribute("products", products)
+        model.addAttribute("products", productPage.products)
+        model.addAttribute("page", productPage.page)
+        model.addAttribute("size", productPage.size)
+        model.addAttribute("totalPages", productPage.totalPages)
+        model.addAttribute("totalItems", productPage.totalItems)
+        model.addAttribute("paginationEnabled", true)
         model.addAttribute("sort", sort)
         model.addAttribute("dir", dir)
 
@@ -44,10 +51,22 @@ class ProductController(
     @PostMapping
     fun createProduct(
         @ModelAttribute form: ProductCreateForm,
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @RequestParam(required = false, defaultValue = "desc") dir: String,
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") size: Int,
         model: Model
     ): String {
         productService.createProduct(form)
-        model.addAttribute("products", productService.getAllProductsForView())
+        val productPage = productService.getProductPageForView(sort, dir, page, size)
+        model.addAttribute("products", productPage.products)
+        model.addAttribute("page", productPage.page)
+        model.addAttribute("size", productPage.size)
+        model.addAttribute("totalPages", productPage.totalPages)
+        model.addAttribute("totalItems", productPage.totalItems)
+        model.addAttribute("paginationEnabled", true)
+        model.addAttribute("sort", sort)
+        model.addAttribute("dir", dir)
         return "fragments/product-table"
     }
 
@@ -59,6 +78,13 @@ class ProductController(
     ): String {
         val products = productService.searchProductsForView(title)
         model.addAttribute("products", products)
+        model.addAttribute("page", 1)
+        model.addAttribute("size", products.size.coerceAtLeast(1))
+        model.addAttribute("totalPages", 1)
+        model.addAttribute("totalItems", products.size)
+        model.addAttribute("paginationEnabled", false)
+        model.addAttribute("sort", "createdAt")
+        model.addAttribute("dir", "desc")
         return "fragments/product-table"
     }
 
@@ -80,8 +106,6 @@ class ProductController(
     ): ResponseEntity<Unit> {
         productService.updateProduct(id, form)
 
-        val products = productService.getAllProductsForView()
-        model.addAttribute("products", products)
 
         return ResponseEntity.noContent().build()
     }
@@ -89,13 +113,24 @@ class ProductController(
     @DeleteMapping("/{id}")
     fun deleteProduct(
         @PathVariable id: Long,
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @RequestParam(required = false, defaultValue = "desc") dir: String,
+        @RequestParam(required = false, defaultValue = "1") page: Int,
+        @RequestParam(required = false, defaultValue = "10") size: Int,
         model: Model
     ): String {
 
         productService.deleteProduct(id)
 
-        val products = productService.getAllProductsForView()
-        model.addAttribute("products", products)
+        val productPage = productService.getProductPageForView(sort, dir, page, size)
+        model.addAttribute("products", productPage.products)
+        model.addAttribute("page", productPage.page)
+        model.addAttribute("size", productPage.size)
+        model.addAttribute("totalPages", productPage.totalPages)
+        model.addAttribute("totalItems", productPage.totalItems)
+        model.addAttribute("paginationEnabled", true)
+        model.addAttribute("sort", sort)
+        model.addAttribute("dir", dir)
 
         return "fragments/product-table"
     }

@@ -13,8 +13,10 @@
         </p>
     </div>
 
+
+<div style="max-height: 500px; overflow: hidden; overflow-y: auto;">
     <table th:if="${!#lists.isEmpty(products)}"
-           style="width: 100%; border-collapse: collapse; font-size: var(--wa-font-size-s); ">
+           style=" width: 100%; border-collapse: collapse; font-size: var(--wa-font-size-s); ">
         <thead style="position: sticky; top: 0; z-index: 10; background-color: var(--wa-color-neutral-95); box-shadow: inset 0 -1px 0 var(--wa-color-neutral-90);">
         <tr>
             <!-- Title -->
@@ -24,7 +26,9 @@
                     hx-swap="innerHTML"
                     th:hx-vals="|js:{
             sort: 'title',
-            dir: '${sort == 'title' && dir == 'asc' ? 'desc' : 'asc'}'
+            dir: '${sort == 'title' && dir == 'asc' ? 'desc' : 'asc'}',
+            page: 1,
+            size: ${size}
         }|"
                     style="cursor: pointer;">
                 Title
@@ -39,7 +43,9 @@
                     hx-swap="innerHTML"
                     th:hx-vals="|js:{
             sort: 'vendor',
-            dir: '${sort == 'vendor' && dir == 'asc' ? 'desc' : 'asc'}'
+            dir: '${sort == 'vendor' && dir == 'asc' ? 'desc' : 'asc'}',
+            page: 1,
+            size: ${size}
         }|"
                     style="cursor: pointer;">
                 Vendor
@@ -53,7 +59,9 @@
                     hx-swap="innerHTML"
                     th:hx-vals="|js:{
             sort: 'type',
-            dir: '${sort == 'type' && dir == 'asc' ? 'desc' : 'asc'}'
+            dir: '${sort == 'type' && dir == 'asc' ? 'desc' : 'asc'}',
+            page: 1,
+            size: ${size}
         }|"
                     style="cursor: pointer;">
                 Type
@@ -69,7 +77,9 @@
                     hx-swap="innerHTML"
                     th:hx-vals="|js:{
             sort: 'createdAt',
-            dir: '${sort == 'createdAt' && dir == 'asc' ? 'desc' : 'asc'}'
+            dir: '${sort == 'createdAt' && dir == 'asc' ? 'desc' : 'asc'}',
+            page: 1,
+            size: ${size}
         }|"
                     style="cursor: pointer;">
                 Created
@@ -174,6 +184,12 @@
                                 th:hx-delete="|/products/${product.id}|"
                                 hx-target="#product-table"
                                 hx-swap="innerHTML"
+                                th:hx-vals="|js:{
+                                    sort: '${sort}',
+                                    dir: '${dir}',
+                                    page: ${page},
+                                    size: ${size}
+                                }|"
                         >
                             Delete
                         </wa-button>
@@ -185,5 +201,46 @@
         </tr>
         </tbody>
     </table>
+</div>
+    <div th:if="${paginationEnabled and totalPages > 1}"
+         style="display: flex; justify-content: space-between; align-items: center; padding: var(--wa-space-m); border-top: 1px solid var(--wa-color-neutral-80);">
+        <wa-button
+                size="small"
+                variant="neutral"
+                appearance="filled-outlined"
+                hx-get="/products"
+                hx-target="#product-table"
+                hx-swap="innerHTML"
+                th:hx-vals="|js:{
+                    sort: '${sort}',
+                    dir: '${dir}',
+                    page: ${page - 1},
+                    size: ${size}
+                }|"
+                th:disabled="${page == 1}">
+            Prev
+        </wa-button>
+
+        <span style="color: var(--wa-color-neutral-40); font-size: var(--wa-font-size-s);">
+            Page <span th:text="${page}">1</span> of <span th:text="${totalPages}">1</span>
+        </span>
+
+        <wa-button
+                size="small"
+                variant="neutral"
+                appearance="filled-outlined"
+                hx-get="/products"
+                hx-target="#product-table"
+                hx-swap="innerHTML"
+                th:hx-vals="|js:{
+                    sort: '${sort}',
+                    dir: '${dir}',
+                    page: ${page + 1},
+                    size: ${size}
+                }|"
+                th:disabled="${page == totalPages}">
+            Next
+        </wa-button>
+    </div>
 
 </div>

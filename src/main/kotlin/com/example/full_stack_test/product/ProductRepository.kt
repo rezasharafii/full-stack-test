@@ -9,6 +9,18 @@ class ProductRepository(
     private val jdbc: JdbcClient
 ) {
 
+    private fun resolveSortColumn(sort: String): String =
+        when (sort) {
+            "title" -> "p.title"
+            "vendor" -> "p.vendor"
+            "type" -> "p.product_type"
+            "createdAt" -> "p.created_at"
+            else -> "p.created_at"
+        }
+
+    private fun resolveSortDirection(dir: String): String =
+        if (dir.equals("asc", true)) "asc" else "desc"
+
 
     fun deleteAll() {
         jdbc.sql("delete from products").update()
@@ -72,6 +84,76 @@ class ProductRepository(
         )
             .query(ProductVariantRow::class.java)
             .list().filterNotNull()
+
+    fun countAllProducts(): Long =
+        jdbc.sql(
+            """
+        select count(*) from products
+        """
+        )
+            .query(Long::class.java)
+            .single()
+
+    fun findProductIdsPage(
+        sort: String,
+        dir: String,
+        limit: Int,
+        offset: Int
+    ): List<Long> {
+        val sortColumn = resolveSortColumn(sort)
+        val direction = resolveSortDirection(dir)
+
+        return jdbc.sql(
+            """
+        select
+            p.id
+        from products p
+        order by $sortColumn $direction, p.id $direction
+        limit :limit
+        offset :offset
+        """
+        )
+            .param("limit", limit)
+            .param("offset", offset)
+            .query(Long::class.java)
+            .list()
+            .filterNotNull()
+    }
+
+    fun findByIdsWithVariants(
+        productIds: List<Long>,
+        sort: String,
+        dir: String
+    ): List<ProductVariantRow> {
+        if (productIds.isEmpty()) {
+            return emptyList()
+        }
+
+        val sortColumn = resolveSortColumn(sort)
+        val direction = resolveSortDirection(dir)
+
+        return jdbc.sql(
+            """
+        select
+            p.id as productId,
+            p.title,
+            p.vendor,
+            p.product_type as productType,
+            p.created_at as createdAt,
+            v.id as variantId,
+            v.sku,
+            v.price
+        from products p
+        left join variants v on v.product_id = p.id
+        where p.id in (:productIds)
+        order by $sortColumn $direction, p.id $direction
+        """
+        )
+            .param("productIds", productIds)
+            .query(ProductVariantRow::class.java)
+            .list()
+            .filterNotNull()
+    }
 
 
     fun insertManualProduct(
@@ -188,16 +270,8 @@ class ProductRepository(
 
 
     fun findAllWithVariantsSorted(sort: String, dir: String): List<ProductVariantRow> {
-
-        val sortColumn = when (sort) {
-            "title" -> "p.title"
-            "vendor" -> "p.vendor"
-            "type" -> "p.product_type"
-            "createdAt" -> "p.created_at"
-            else -> "p.created_at"
-        }
-
-        val direction = if (dir.equals("asc", true)) "asc" else "desc"
+        val sortColumn = resolveSortColumn(sort)
+        val direction = resolveSortDirection(dir)
 
         return jdbc.sql(
             """
@@ -212,7 +286,7 @@ class ProductRepository(
             v.price
         from products p
         left join variants v on v.product_id = p.id
-        order by $sortColumn $direction
+        order by $sortColumn $direction, p.id $direction
         """
         )
             .query(ProductVariantRow::class.java)

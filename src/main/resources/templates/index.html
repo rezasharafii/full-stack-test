@@ -11,6 +11,7 @@
                 hx-get="/products"
                 hx-target="#product-table"
                 hx-swap="innerHTML"
+                hx-vals='js:{page: 1, size: 10}'
                 hx-on:htmx:after:request="document.getElementById('form-container').style.display = 'block'">
 
             <wa-icon slot="prefix" name="plus"></wa-icon>
@@ -19,7 +20,7 @@
     </div>
 
     <div id="product-table"
-         style="max-height: 500px; overflow: hidden; overflow-y: auto; border-radius: var(--wa-border-radius-m); box-shadow: var(--wa-shadow-l) ">
+         style=" border-radius: var(--wa-border-radius-m); box-shadow: var(--wa-shadow-l) ">
         <p style="color: var(--wa-color-neutral-50); text-align: center; padding: var(--wa-space-xl);">
             No products loaded. Click "Load Products" to begin.
         </p>
@@ -43,7 +44,7 @@
                   style="display: flex; flex-direction: column; gap: var(--wa-space-l);">
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--wa-space-m);">
-                    <wa-input name="title" label="Product Title" placeholder="e.g. Wireless Mouse" required clearable
+                    <wa-input name="title" label="Product Title" placeholder="e.g. Wireless Mouse" required
                               style="grid-column: span 2;"></wa-input>
                     <wa-input name="vendor" label="Vendor" placeholder="Brand name"></wa-input>
                     <wa-input name="productType" label="Type" placeholder="Category"></wa-input>

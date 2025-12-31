@@ -10,6 +10,7 @@ class ProductService(
     private val productRepository: ProductRepository
 ) {
 
+
     private fun mapToProductViews(rows: List<ProductVariantRow>): List<ProductView> {
         return rows
             .groupBy { it.productId }
@@ -34,9 +35,37 @@ class ProductService(
                             )
                         }
                 )
-            }
+        }
     }
 
+    fun getProductPageForView(
+        sort: String = "createdAt",
+        dir: String = "desc",
+        page: Int = 1,
+        size: Int = 10
+    ): ProductPageView {
+        val safeSize = size.coerceIn(1, 100)
+        val totalItems = productRepository.countAllProducts().toInt()
+        val totalPages = if (totalItems == 0) 1 else ((totalItems + safeSize - 1) / safeSize)
+        val safePage = page.coerceIn(1, totalPages)
+        val offset = (safePage - 1) * safeSize
+
+        val productIds = productRepository.findProductIdsPage(
+            sort = sort,
+            dir = dir,
+            limit = safeSize,
+            offset = offset
+        )
+        val rows = productRepository.findByIdsWithVariants(productIds, sort, dir)
+
+        return ProductPageView(
+            products = mapToProductViews(rows),
+            page = safePage,
+            size = safeSize,
+            totalItems = totalItems,
+            totalPages = totalPages
+        )
+    }
 
     fun getAllProductsForView(
         sort: String = "createdAt",

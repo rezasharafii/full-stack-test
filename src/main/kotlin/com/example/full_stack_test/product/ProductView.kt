@@ -16,3 +16,11 @@ data class VariantView(
     val sku: String?,
     val price: String?
 )
+
+data class ProductPageView(
+    val products: List<ProductView>,
+    val page: Int,
+    val size: Int,
+    val totalItems: Int,
+    val totalPages: Int
+)
