@@ -1,6 +1,6 @@
 CREATE TABLE sales
 (
-    id             BIGSERIAL PRIMARY KEY,
+    id             INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     product_id     BIGINT         NOT NULL,
     variant_id     BIGINT         NOT NULL,
     quantity       INT            NOT NULL DEFAULT 1,

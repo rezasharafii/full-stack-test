@@ -1,6 +1,6 @@
 create table products
 (
-    id           bigserial primary key,
+    id           integer primary key generated always as identity,
     external_id  bigint      not null unique,
     title        text        not null,
     vendor       text,
@@ -10,7 +10,7 @@ create table products
 
 create table variants
 (
-    id         bigserial primary key,
+    id         integer primary key generated always as identity,
     product_id bigint not null references products (id) on delete cascade,
     sku        text,
     price      numeric(10, 2)
