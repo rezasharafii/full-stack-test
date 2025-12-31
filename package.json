@@ -1,6 +1,7 @@
 {
   "name": "full-stack-test",
   "version": "1.0.0",
+  "web-types": "./node_modules/@awesome.me/webawesome/dist/web-types.json",
   "dependencies": {
     "@awesome.me/webawesome": "^3.1.0"
   }
