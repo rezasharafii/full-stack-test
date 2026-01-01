@@ -1,6 +1,8 @@
-package com.example.full_stack_test.sale
+package com.example.full_stack_test.controller
 
 import com.example.full_stack_test.product.ProductService
+import com.example.full_stack_test.sale.SaleService
+import com.example.full_stack_test.sale.SalesStream
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -9,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-
 
 @Controller
 @RequestMapping("/sales")

@@ -1,16 +1,24 @@
-package com.example.full_stack_test.product
+package com.example.full_stack_test.controller
 
+import com.example.full_stack_test.product.ProductCreateForm
+import com.example.full_stack_test.product.ProductService
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 @RequestMapping("/products")
 class ProductController(
     private val productService: ProductService
 ) {
-
 
     @GetMapping
     fun listProducts(
@@ -58,16 +66,7 @@ class ProductController(
         model: Model
     ): String {
         productService.createProduct(form)
-        val productPage = productService.getProductPageForView(sort, dir, page, size)
-        model.addAttribute("products", productPage.products)
-        model.addAttribute("page", productPage.page)
-        model.addAttribute("size", productPage.size)
-        model.addAttribute("totalPages", productPage.totalPages)
-        model.addAttribute("totalItems", productPage.totalItems)
-        model.addAttribute("paginationEnabled", true)
-        model.addAttribute("sort", sort)
-        model.addAttribute("dir", dir)
-        return "fragments/product-table"
+        return listProducts(sort, dir, page, size, model)
     }
 
 
@@ -101,12 +100,9 @@ class ProductController(
     @PutMapping("/{id}/edit")
     fun updateProduct(
         @PathVariable id: Long,
-        @ModelAttribute form: ProductCreateForm,
-        model: Model
+        @ModelAttribute form: ProductCreateForm
     ): ResponseEntity<Unit> {
         productService.updateProduct(id, form)
-
-
         return ResponseEntity.noContent().build()
     }
 
@@ -119,20 +115,8 @@ class ProductController(
         @RequestParam(required = false, defaultValue = "10") size: Int,
         model: Model
     ): String {
-
         productService.deleteProduct(id)
-
-        val productPage = productService.getProductPageForView(sort, dir, page, size)
-        model.addAttribute("products", productPage.products)
-        model.addAttribute("page", productPage.page)
-        model.addAttribute("size", productPage.size)
-        model.addAttribute("totalPages", productPage.totalPages)
-        model.addAttribute("totalItems", productPage.totalItems)
-        model.addAttribute("paginationEnabled", true)
-        model.addAttribute("sort", sort)
-        model.addAttribute("dir", dir)
-
-        return "fragments/product-table"
+        return listProducts(sort, dir, page, size, model)
     }
 
 }
