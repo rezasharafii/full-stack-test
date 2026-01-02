@@ -37,9 +37,9 @@ class SaleService(private val saleRepository: SaleRepository) {
     }
 
 
-    fun getMonthlySummary(): AccountingSummary {
-        val totals = saleRepository.getMonthlyFinancialTotals()
-        val recentSales = saleRepository.findRecentSaleRows()
+    fun getMonthlySummary(productTitle: String? = null): AccountingSummary {
+        val totals = saleRepository.getMonthlyFinancialTotals(productTitle)
+        val recentSales = saleRepository.findRecentSaleRows(productTitle)
 
         return AccountingSummary(
             totalRevenue = totals.revenue,

@@ -25,6 +25,16 @@ class SaleController(
         return "sales"
     }
 
+    @GetMapping("/filter")
+    fun filter(
+        @RequestParam(required = false) productTitle: String?,
+        model: Model
+    ): String {
+        model.addAttribute("summary", saleService.getMonthlySummary(productTitle))
+        model.addAttribute("productTitle", productTitle)
+        return "sales-filter"
+    }
+
 
     @GetMapping("/stream")
     fun stream(model: Model): SseEmitter {

@@ -38,32 +38,50 @@ class SaleRepository(
         jdbc.sql("delete from sales").update()
     }
 
-    fun findRecentSaleRows(): List<SaleRow> {
-        return jdbc.sql(
-            """
+    fun findRecentSaleRows(productTitle: String? = null): List<SaleRow> {
+        var sql = """
             SELECT s.id, p.title as productTitle, v.sku, s.total_amount as totalAmount, s.sold_at as soldAt , quantity
             FROM sales s
             JOIN products p ON s.product_id = p.id
             JOIN variants v ON s.variant_id = v.id
-            ORDER BY s.sold_at DESC 
         """
-        )
-            .query(SaleRow::class.java)
-            .list().filterNotNull()
+        val params = mutableMapOf<String, Any>()
+
+        if (!productTitle.isNullOrBlank()) {
+            sql += " WHERE p.title ILIKE :productTitle"
+            params["productTitle"] = "%$productTitle%"
+        }
+
+        sql += " ORDER BY s.sold_at DESC"
+
+        val query = jdbc.sql(sql)
+        params.forEach { (k, v) -> query.param(k, v) }
+
+        return query.query(SaleRow::class.java).list().filterNotNull()
     }
 
 
-
-    fun getMonthlyFinancialTotals(): MonthlyTotals {
-        return jdbc.sql("""
+    fun getMonthlyFinancialTotals(productTitle: String? = null): MonthlyTotals {
+        var sql = """
             SELECT 
                 COALESCE(SUM(total_amount), 0) as totalRevenue, 
                 COALESCE(SUM(tax_amount), 0) as totalTax, 
                 COUNT(*) as salesCount 
-            FROM sales 
-            WHERE sold_at >= date_trunc('month', CURRENT_DATE)
-        """)
-            .query { rs, _ ->
+            FROM sales s
+            JOIN products p ON s.product_id = p.id
+            WHERE s.sold_at >= date_trunc('month', CURRENT_DATE)
+        """
+        val params = mutableMapOf<String, Any>()
+
+        if (!productTitle.isNullOrBlank()) {
+            sql += " AND p.title ILIKE :productTitle"
+            params["productTitle"] = "%$productTitle%"
+        }
+
+        val query = jdbc.sql(sql)
+        params.forEach { (k, v) -> query.param(k, v) }
+
+        return query.query { rs, _ ->
                 MonthlyTotals(
                     revenue = rs.getBigDecimal("totalRevenue"),
                     tax = rs.getBigDecimal("totalTax"),

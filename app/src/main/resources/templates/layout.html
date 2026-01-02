@@ -121,48 +121,6 @@
                 toast.classList.remove("show", variant);
             }, 5100);
         }
-
-        (function () {
-            let lastFocusedId = null;
-
-            document.body.addEventListener("htmx:beforeRequest", (event) => {
-                const form = document.getElementById("product-filter-form");
-                if (!form || !event.detail || !event.detail.elt || !form.contains(event.detail.elt)) {
-                    return;
-                }
-
-                const preserveToggle = document.getElementById("preserve-focus");
-                const status = document.getElementById("focus-status");
-
-                if (!preserveToggle || !preserveToggle.checked) {
-                    lastFocusedId = null;
-                    if (status) {
-                        status.textContent = "Focus check off.";
-                    }
-                    return;
-                }
-
-                const active = document.activeElement;
-                lastFocusedId = active ? active.id : null;
-            });
-
-            document.body.addEventListener("htmx:afterSwap", (event) => {
-                if (!event.target || event.target.id !== "main-content") {
-                    return;
-                }
-
-                const preserveToggle = document.getElementById("preserve-focus");
-                const status = document.getElementById("focus-status");
-                if (!preserveToggle || !preserveToggle.checked || !status) {
-                    return;
-                }
-
-                const active = document.activeElement;
-                const preserved = lastFocusedId && active && active.id === lastFocusedId;
-                status.textContent = preserved ? "Focus preserved after filters." : "Focus moved after filters.";
-            });
-        })();
-
     </script>
 
 </head>
@@ -212,6 +170,17 @@
                 hx-select="#main-content"
                 hx-push-url="true">
             Products Sales
+        </wa-button>
+
+        <wa-button
+                variant="neutral"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/sales/filter"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Filter Sales
         </wa-button>
     </nav>
 </aside>
