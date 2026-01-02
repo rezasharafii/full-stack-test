@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(content)">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Products</title>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-alpha5/dist/htmx.min.js"
+            integrity="sha384-LAnQFtNXh8s0hn9mOc8bezfn16i4Zo4y3i4dMT8PtV9yip8jGehR3RxCJrmHV11d"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.webawesome.com/23a000944d30477a.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+        }
+
+        body {
+            margin: 0;
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            min-height: 100vh;
+            background-color: var(--wa-color-neutral-95);
+            color: var(--wa-color-neutral-05);
+        }
+
+        aside {
+            background: white;
+            border-right: 1px solid var(--wa-color-neutral-80);
+            padding: var(--wa-space-l);
+        }
+
+        main {
+            padding: var(--wa-space-2xl);
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: var(--wa-space-2xl);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--wa-color-neutral-80);
+            border-radius: var(--wa-border-radius-m);
+            padding: var(--wa-space-l);
+            box-shadow: var(--wa-shadow-s);
+        }
+
+        th {
+            padding: var(--wa-space-m);
+            text-align: left;
+            color: var(--wa-color-neutral-30);
+            font-weight: var(--wa-font-weight-semibold);
+        }
+
+        #custom-toast {
+            visibility: hidden;
+            min-width: 280px;
+            color: white;
+            text-align: center;
+            border-radius: var(--wa-border-radius-m, 4px);
+            padding: var(--wa-space-m, 16px);
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: var(--wa-shadow-l);
+            transition: background-color 0.3s;
+        }
+
+        #custom-toast.success {
+            background-color: var(--wa-color-success-40, #28a745);
+        }
+
+        #custom-toast.info {
+            background-color: var(--wa-color-brand-40, #17a2b8);
+        }
+
+        #custom-toast.danger {
+            background-color: var(--wa-color-danger-40, #dc3545);
+        }
+
+        #custom-toast.show {
+            visibility: visible;
+            animation: fade-in-out 5s ease-in-out forwards;
+        }
+
+        @keyframes fade-in-out {
+            0% {
+                bottom: 0;
+                opacity: 0;
+            }
+            10% {
+                bottom: 30px;
+                opacity: 1;
+            }
+            90% {
+                bottom: 30px;
+                opacity: 1;
+            }
+            100% {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+    </style>
+    <script>
+        function showToast(message, variant = 'success') {
+            const toast = document.getElementById("custom-toast");
+
+            toast.textContent = message;
+            toast.className = "";
+
+            void toast.offsetWidth;
+
+            toast.classList.add(variant, "show");
+
+            setTimeout(() => {
+                toast.classList.remove("show", variant);
+            }, 5100);
+        }
+
+        (function () {
+            let lastFocusedId = null;
+
+            document.body.addEventListener("htmx:beforeRequest", (event) => {
+                const form = document.getElementById("product-filter-form");
+                if (!form || !event.detail || !event.detail.elt || !form.contains(event.detail.elt)) {
+                    return;
+                }
+
+                const preserveToggle = document.getElementById("preserve-focus");
+                const status = document.getElementById("focus-status");
+
+                if (!preserveToggle || !preserveToggle.checked) {
+                    lastFocusedId = null;
+                    if (status) {
+                        status.textContent = "Focus check off.";
+                    }
+                    return;
+                }
+
+                const active = document.activeElement;
+                lastFocusedId = active ? active.id : null;
+            });
+
+            document.body.addEventListener("htmx:afterSwap", (event) => {
+                if (!event.target || event.target.id !== "main-content") {
+                    return;
+                }
+
+                const preserveToggle = document.getElementById("preserve-focus");
+                const status = document.getElementById("focus-status");
+                if (!preserveToggle || !preserveToggle.checked || !status) {
+                    return;
+                }
+
+                const active = document.activeElement;
+                const preserved = lastFocusedId && active && active.id === lastFocusedId;
+                status.textContent = preserved ? "Focus preserved after filters." : "Focus moved after filters.";
+            });
+        })();
+
+    </script>
+
+</head>
+<body>
+<aside>
+    <h2 style="margin-top: 0;">WA Admin</h2>
+    <nav style="display: flex; flex-direction: column; gap: var(--wa-space-s);">
+        <wa-button
+                variant="neutral"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Products
+        </wa-button>
+
+        <wa-button
+                variant="neutral"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/products/filters"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Filter Products
+        </wa-button>
+
+        <wa-button
+                variant="neutral"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/search"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Search Products
+        </wa-button>
+
+        <wa-button
+                variant="neutral"
+                size="small"
+                style="width: 100%; justify-content: start;"
+                hx-get="/sales"
+                hx-target="#main-content"
+                hx-select="#main-content"
+                hx-push-url="true">
+            Products Sales
+        </wa-button>
+    </nav>
+</aside>
+<main>
+    <header>
+        <h1 style="font-size: var(--wa-font-size-2xl);">Product Management</h1>
+        <p>Manage your inventory and product listings.</p>
+    </header>
+
+    <div id="main-content">
+        <div th:replace="${content}"></div>
+    </div>
+    <div id="custom-toast"></div>
+
+</main>
+</body>
+</html>

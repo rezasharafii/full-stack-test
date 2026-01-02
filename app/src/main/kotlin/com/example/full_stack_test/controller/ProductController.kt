@@ -13,12 +13,28 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.math.BigDecimal
 
 @Controller
 @RequestMapping("/products")
 class ProductController(
     private val productService: ProductService
 ) {
+
+    private fun addFilterAttributes(
+        model: Model,
+        title: String?,
+        productType: String?,
+        vendor: String?,
+        minPrice: BigDecimal?,
+        maxPrice: BigDecimal?
+    ) {
+        model.addAttribute("filterTitle", title ?: "")
+        model.addAttribute("filterType", productType ?: "")
+        model.addAttribute("filterVendor", vendor ?: "")
+        model.addAttribute("filterMinPrice", minPrice?.toPlainString() ?: "")
+        model.addAttribute("filterMaxPrice", maxPrice?.toPlainString() ?: "")
+    }
 
     @GetMapping
     fun listProducts(
@@ -38,6 +54,8 @@ class ProductController(
         model.addAttribute("paginationEnabled", true)
         model.addAttribute("sort", sort)
         model.addAttribute("dir", dir)
+        model.addAttribute("tableEndpoint", "/products")
+        addFilterAttributes(model, null, null, null, null, null)
 
         return "fragments/product-table"
     }
@@ -73,17 +91,93 @@ class ProductController(
     @GetMapping("/search")
     fun searchProducts(
         @RequestParam(required = false) title: String?,
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @RequestParam(required = false, defaultValue = "desc") dir: String,
         model: Model
     ): String {
-        val products = productService.searchProductsForView(title)
+        val products = productService.searchProductsForView(title, sort, dir)
         model.addAttribute("products", products)
         model.addAttribute("page", 1)
         model.addAttribute("size", products.size.coerceAtLeast(1))
         model.addAttribute("totalPages", 1)
         model.addAttribute("totalItems", products.size)
         model.addAttribute("paginationEnabled", false)
-        model.addAttribute("sort", "createdAt")
-        model.addAttribute("dir", "desc")
+        model.addAttribute("sort", sort)
+        model.addAttribute("dir", dir)
+        model.addAttribute("tableEndpoint", "/products/search")
+        addFilterAttributes(model, title, null, null, null, null)
+        return "fragments/product-table"
+    }
+
+    @GetMapping("/filters")
+    fun filterProductsPage(
+        @RequestParam(required = false) title: String?,
+        @RequestParam(required = false) productType: String?,
+        @RequestParam(required = false) vendor: String?,
+        @RequestParam(required = false) minPrice: BigDecimal?,
+        @RequestParam(required = false) maxPrice: BigDecimal?,
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @RequestParam(required = false, defaultValue = "desc") dir: String,
+        model: Model
+    ): String {
+        val products = productService.filterProductsForView(
+            title = title,
+            productType = productType,
+            vendor = vendor,
+            minPrice = minPrice,
+            maxPrice = maxPrice,
+            sort = sort,
+            dir = dir
+        )
+        val productTypes = productService.getProductTypesForFilter()
+
+        model.addAttribute("products", products)
+        model.addAttribute("page", 1)
+        model.addAttribute("size", products.size.coerceAtLeast(1))
+        model.addAttribute("totalPages", 1)
+        model.addAttribute("totalItems", products.size)
+        model.addAttribute("paginationEnabled", false)
+        model.addAttribute("sort", sort)
+        model.addAttribute("dir", dir)
+        model.addAttribute("tableEndpoint", "/products/filters/table")
+        model.addAttribute("productTypes", productTypes)
+        addFilterAttributes(model, title, productType, vendor, minPrice, maxPrice)
+
+        return "products-filter"
+    }
+
+    @GetMapping("/filters/table")
+    fun filterProductsTable(
+        @RequestParam(required = false) title: String?,
+        @RequestParam(required = false) productType: String?,
+        @RequestParam(required = false) vendor: String?,
+        @RequestParam(required = false) minPrice: BigDecimal?,
+        @RequestParam(required = false) maxPrice: BigDecimal?,
+        @RequestParam(required = false, defaultValue = "createdAt") sort: String,
+        @RequestParam(required = false, defaultValue = "desc") dir: String,
+        model: Model
+    ): String {
+        val products = productService.filterProductsForView(
+            title = title,
+            productType = productType,
+            vendor = vendor,
+            minPrice = minPrice,
+            maxPrice = maxPrice,
+            sort = sort,
+            dir = dir
+        )
+
+        model.addAttribute("products", products)
+        model.addAttribute("page", 1)
+        model.addAttribute("size", products.size.coerceAtLeast(1))
+        model.addAttribute("totalPages", 1)
+        model.addAttribute("totalItems", products.size)
+        model.addAttribute("paginationEnabled", false)
+        model.addAttribute("sort", sort)
+        model.addAttribute("dir", dir)
+        model.addAttribute("tableEndpoint", "/products/filters/table")
+        addFilterAttributes(model, title, productType, vendor, minPrice, maxPrice)
+
         return "fragments/product-table"
     }
 
@@ -109,6 +203,11 @@ class ProductController(
     @DeleteMapping("/{id}")
     fun deleteProduct(
         @PathVariable id: Long,
+        @RequestParam(required = false) title: String?,
+        @RequestParam(required = false) productType: String?,
+        @RequestParam(required = false) vendor: String?,
+        @RequestParam(required = false) minPrice: BigDecimal?,
+        @RequestParam(required = false) maxPrice: BigDecimal?,
         @RequestParam(required = false, defaultValue = "createdAt") sort: String,
         @RequestParam(required = false, defaultValue = "desc") dir: String,
         @RequestParam(required = false, defaultValue = "1") page: Int,
@@ -116,7 +215,17 @@ class ProductController(
         model: Model
     ): String {
         productService.deleteProduct(id)
-        return listProducts(sort, dir, page, size, model)
+        val hasFilters = !title.isNullOrBlank() ||
+            !productType.isNullOrBlank() ||
+            !vendor.isNullOrBlank() ||
+            minPrice != null ||
+            maxPrice != null
+
+        return if (hasFilters) {
+            filterProductsTable(title, productType, vendor, minPrice, maxPrice, sort, dir, model)
+        } else {
+            listProducts(sort, dir, page, size, model)
+        }
     }
 
 }

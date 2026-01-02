@@ -1,0 +1,13 @@
+package com.example.full_stack_test.controller
+
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
+
+@Controller
+class HomeController {
+    @GetMapping("/")
+    fun index(): String = "index"
+
+    @GetMapping("/search")
+    fun search(): String = "search"
+}

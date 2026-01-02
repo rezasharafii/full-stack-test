@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::body})}">
+<body>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--wa-space-l);">
+        <h3 style="margin: 0;">Product Filters</h3>
+        <div style="display: flex; gap: var(--wa-space-s);">
+            <wa-button
+                    variant="neutral"
+                    size="small"
+                    hx-get="/products/filters"
+                    hx-target="#main-content"
+                    hx-select="#main-content"
+                    hx-swap="outerMorph"
+                    hx-push-url="true">
+                Reset
+            </wa-button>
+            <wa-button
+                    variant="neutral"
+                    size="small"
+                    hx-get="/"
+                    hx-target="#main-content"
+                    hx-select="#main-content"
+                    hx-push-url="true">
+                Product List
+            </wa-button>
+        </div>
+    </div>
+
+    <form id="product-filter-form"
+          hx-get="/products/filters"
+          hx-target="#main-content"
+          hx-select="#main-content"
+          hx-swap="outerMorph"
+          hx-push-url="true"
+          hx-trigger="change delay:200ms, submit"
+          style="display: flex; flex-direction: column; gap: var(--wa-space-m);">
+
+        <input type="hidden" name="sort" th:value="${sort}">
+        <input type="hidden" name="dir" th:value="${dir}">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--wa-space-m);">
+            <wa-input id="filter-title"
+                      name="title"
+                      label="Title"
+                      placeholder="Search by title"
+                      th:value="${filterTitle}">
+            </wa-input>
+
+            <wa-input id="filter-vendor"
+                      name="vendor"
+                      label="Vendor"
+                      placeholder="Brand name"
+                      th:value="${filterVendor}">
+            </wa-input>
+
+            <div>
+                <label for="filter-type" style="display: block; font-size: var(--wa-font-size-s); color: var(--wa-color-neutral-30); margin-bottom: var(--wa-space-2xs);">
+                    Product Type
+                </label>
+                <select id="filter-type"
+                        name="productType"
+                        style="width: 100%; padding: var(--wa-space-s); border-radius: var(--wa-border-radius-s); border: 1px solid var(--wa-color-neutral-80);">
+                    <option value="">All Types</option>
+                    <option th:each="type : ${productTypes}"
+                            th:value="${type}"
+                            th:selected="${type == filterType}"
+                            th:text="${type}">
+                    </option>
+                </select>
+            </div>
+
+            <wa-input id="filter-min-price"
+                      name="minPrice"
+                      label="Min Price"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      th:value="${filterMinPrice}">
+            </wa-input>
+
+            <wa-input id="filter-max-price"
+                      name="maxPrice"
+                      label="Max Price"
+                      type="number"
+                      step="0.01"
+                      placeholder="999.99"
+                      th:value="${filterMaxPrice}">
+            </wa-input>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--wa-space-m);">
+
+            <wa-button variant="brand" th:type="submit">
+                Apply Filters
+            </wa-button>
+        </div>
+    </form>
+
+    <div id="product-table"
+         style="margin-top: var(--wa-space-l); border-radius: var(--wa-border-radius-m); box-shadow: var(--wa-shadow-l);">
+        <div th:replace="~{fragments/product-table :: product-table}"></div>
+    </div>
+
+</div>
+
+</body>
+</html>

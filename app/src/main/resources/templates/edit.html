@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:hx-on="http://www.w3.org/1999/xhtml"
+      th:replace="~{layout :: layout(~{::body})}">
+<body>
+<div class="card"
+     style="margin-top: var(--wa-space-l);
+            padding: var(--wa-space-xl);
+           ">
+
+    <h3 style="margin-top: 0; margin-bottom: var(--wa-space-l);">
+        Update Product
+    </h3>
+
+    <form th:hx-put="|/products/${product.id}/edit|"
+          hx-on:htmx:after:request="
+
+        const isUpdate = event.detail.ctx.request.method === 'PUT';
+        const isSuccess = event.detail.ctx.response.status == 204;
+
+        if (isSuccess && isUpdate) {
+            showToast('Product updated successfully!', 'success');
+        }"
+          style="display: flex; flex-direction: column; gap: var(--wa-space-l);">
+
+        <!-- Product fields -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--wa-space-m);">
+
+            <wa-input name="title"
+                      label="Product Title"
+                      th:value="${product.title}"
+                      required
+                      style="grid-column: span 2;"></wa-input>
+
+            <wa-input name="vendor"
+                      label="Vendor"
+                      th:value="${product.vendor}"></wa-input>
+
+            <wa-input name="productType"
+                      label="Type"
+                      th:value="${product.productType}"></wa-input>
+        </div>
+
+        <!-- Variants -->
+        <div style="border-top: 1px solid var(--wa-color-neutral-80);
+            padding-top: var(--wa-space-l);">
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h4 style="margin: 0;">Variants</h4>
+
+                <wa-button
+                        type="button"
+                        size="small"
+                        variant="neutral"
+                        appearance="filled-outlined"
+                        hx-get="/products/variant-row"
+                        hx-target="#variants"
+                        hx-swap="beforeend"
+                        hx-vals='js:{ index: document.querySelectorAll(".variant-row").length }'>
+                    <wa-icon name="plus"></wa-icon>
+                    Add Variant
+                </wa-button>
+            </div>
+
+            <div id="variants"
+                 style="display: flex; flex-direction: column; gap: var(--wa-space-s); margin-top: var(--wa-space-s);">
+
+                <div th:each="variant, iter : ${product.variants}"
+                     hx-get="/products/variant-row"
+                     hx-trigger="load"
+                     hx-target="this"
+                     hx-swap="outerHTML"
+                     th:hx-vals="|js:{
+                index: ${iter.index},
+                sku: '${variant.sku}',
+                price: '${variant.price}'
+             }|">
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Submit -->
+        <wa-button variant="success" style="width: fit-content" th:type="submit">
+            Save Changes
+        </wa-button>
+
+    </form>
+</div>
+
+</body>
+</html>
